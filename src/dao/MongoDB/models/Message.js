@@ -15,7 +15,5 @@ const messageSchema = new Schema({
 export class ManagerMessageMongoDB extends ManagerMongoDB {
     constructor() {
         super(url, "messages", messageSchema)
-        //Aqui irian los atributos propios de la clase
     }
-    //Aqui irian los metodos propios de la clase
 }
