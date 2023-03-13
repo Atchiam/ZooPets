@@ -8,9 +8,12 @@ import { getManagerMessages } from './dao/daoManager.js'
 //-----RUTAS
 import routerProduct from "./routes/productos.routes.js";
 import routerMessage from './routes/chat.routes.js';
-//import routerCarrito from "./routes/carritos.routes.js";
-//import routerSocket from "./routes/socket.routes.js";
-//import routerUser from "./routes/users.routes.js";
+import routerCarrito from "./routes/carritos.routes.js";
+import routerSocket from "./routes/socket.routes.js";
+
+import { ProductManager } from "./controllers/ProductManager.js";
+
+const productManager = new ProductManager('src/models/productos.json')
 
 const app = express()
 
@@ -20,40 +23,44 @@ const server = app.listen(app.get("port"), () =>{
 })
 
 //------ServerIO
-const io = new Server(server)
+const io = new Server(server);
+const data = await getManagerMessages();
+const managerMessages = new data();
 
-const managerMessage = new getManagerMessages()
-io.on("connection", async (socket) => {
-    //---- chat
+io.on("connection", async (socket)=>{ 
+
+    console.log("Cliente conectado");
+    managerMessages.getElements().then((messages) => {
+        socket.emit("allMessages", messages);
+    })
+
     socket.on("message", async (info) => {
-        managerMessage.addElements(info).then(()=>{
-            managerMessage.getElements().then((messages)=>{
-                socket.emit("allMessages", messages)
+        managerMessages.addElements([info]).then(() => {
+            managerMessages.getElements().then((messages) => {
+                socket.emit("allMessages", messages);
             })
         })
     })
+
+    socket.on("AddProduct", async info => { //Canal de coneccion --- cuando recibo la informacion de mi cliente
+        console.log(info);
+        let titulo =info.title
+        let descripcion =info.description
+        let precio =info.price
+        let imagen =info.thumbnail
+        let stock =info.stock
+        let code =info.code
+        let nuevoProduct = await productManager.addProduct(titulo, descripcion, precio, imagen, stock, code);
+        socket.emit("confirmacionAdd",nuevoProduct)
+    })
+
+    socket.on("EliminarProduct", async id => { //Canal de coneccion --- cuando recibo la informacion de mi cliente
+        let productoBorrado = await productManager.deleteProduct(id) 
+        socket.emit("confirmacionBorrado",productoBorrado)
+    })
+
+    socket.emit("getProducts",  await productManager.getProducts()); //emito info desde mi servidor
 })
-
-    //---- Productos Realtime
-//     socket.on("AddProduct", async info => { //Canal de coneccion --- cuando recibo la informacion de mi cliente
-//         console.log(info);
-//         let titulo =info.title
-//         let descripcion =info.description
-//         let precio =info.price
-//         let imagen =info.thumbnail
-//         let stock =info.stock
-//         let code =info.code
-//         let nuevoProduct = await productManager.addProduct(titulo, descripcion, precio, imagen, stock, code);
-//         socket.emit("confirmacionAdd",nuevoProduct)
-//     })
-
-//     socket.on("EliminarProduct", async id => { //Canal de coneccion --- cuando recibo la informacion de mi cliente
-//         let productoBorrado = await productManager.deleteProduct(id) 
-//         socket.emit("confirmacionBorrado",productoBorrado)
-//     })
-
-//     socket.emit("getProducts",  await productManager.getProducts()); //emito info desde mi servidor
-// })
 
 
 
@@ -68,8 +75,8 @@ app.set('views', path.resolve(__dirname, './views'))
 
 //--------Routes
 app.use('/', express.static(__dirname + '/public'))
+app.use('/', routerSocket)
 app.use('/api/chat', express.static(__dirname + '/public')) 
-app.use('/api/products', routerProduct) 
 app.use('/api/chat', routerMessage)
-//app.use('/api/carts',routerCarrito)
-//app.use('/', routerSocket)
+app.use('/api/products', routerProduct) 
+app.use('/api/carts',routerCarrito)

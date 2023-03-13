@@ -5,11 +5,8 @@ const routerSocket = Router();
 const productManager = new ProductManager('src/models/productos.json');
 
 routerSocket.get('/realtimeproducts', async(req,res) => {
-    const products = await productManager.getProducts()
-
     res.render("realTimeProducts", { 
         titulo: "PetsShop - Catalogo Tiempo real",
-        products: products
     })
 })
 
