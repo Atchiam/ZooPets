@@ -1,7 +1,8 @@
 const eleccionBDD = 1
 
 export const getManagerMessages = async() => {
-    const modelMessage = process.env.DBSELECTION == 1 ? await import('./MongoDB/models/Message.js').then(module => module.default) : await import('./Postgresql/models/Message.js').then(module => module.default)
+    const modelMessage = process.env.DBSELECTION == 1 ? await import('./MongoDB/models/Message.js').then(module => module.default) : 
+    await import('./Postgresql/models/Message.js').then(module => module.default)
     return modelMessage
 }
 

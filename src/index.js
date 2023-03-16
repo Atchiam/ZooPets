@@ -2,18 +2,17 @@ import 'dotenv/config'
 import express from 'express'
 import { engine } from "express-handlebars";
 import { Server} from 'socket.io'
-import { __dirname } from "./path.js"
+import { __filename, __dirname } from "./path.js"
 import * as path from 'path'
-import { getManagerMessages } from './dao/daoManager.js'
 //-----RUTAS
-import routerProduct from "./routes/productos.routes.js";
+import managerMessages from './controllers/Message.js';
+import managerProduct from './controllers/Product.js';
+
+//import routerProduct from "./routes/productos.routes.js";
 import routerMessage from './routes/chat.routes.js';
 import routerCarrito from "./routes/carritos.routes.js";
 import routerSocket from "./routes/socket.routes.js";
-
-import { ProductManager } from "./controllers/ProductManager.js";
-
-const productManager = new ProductManager('src/models/productos.json')
+import routerProduct from './routes/productos.routes.js';
 
 const app = express()
 
@@ -24,42 +23,35 @@ const server = app.listen(app.get("port"), () =>{
 
 //------ServerIO
 const io = new Server(server);
-const data = await getManagerMessages();
-const managerMessages = new data();
 
 io.on("connection", async (socket)=>{ 
-
+//------Mensajes
     console.log("Cliente conectado");
     managerMessages.getElements().then((messages) => {
         socket.emit("allMessages", messages);
     })
 
     socket.on("message", async (info) => {
-        managerMessages.addElements([info]).then(() => {
+        await managerMessages.addElements([info]).then(() => {
             managerMessages.getElements().then((messages) => {
                 socket.emit("allMessages", messages);
             })
         })
     })
-
-    socket.on("AddProduct", async info => { //Canal de coneccion --- cuando recibo la informacion de mi cliente
-        console.log(info);
-        let titulo =info.title
-        let descripcion =info.description
-        let precio =info.price
-        let imagen =info.thumbnail
-        let stock =info.stock
-        let code =info.code
-        let nuevoProduct = await productManager.addProduct(titulo, descripcion, precio, imagen, stock, code);
+//------Productos
+    socket.on("AddProduct", async (info) => { //Canal de coneccion --- cuando recibo la informacion de mi cliente
+        let nuevoProduct = await managerProduct.addElements([info]);
         socket.emit("confirmacionAdd",nuevoProduct)
+        socket.emit("getProducts",  await managerProduct.getElements());
     })
 
-    socket.on("EliminarProduct", async id => { //Canal de coneccion --- cuando recibo la informacion de mi cliente
-        let productoBorrado = await productManager.deleteProduct(id) 
+    socket.on("EliminarProduct", async _id => { //Canal de coneccion --- cuando recibo la informacion de mi cliente
+        let productoBorrado = await managerProduct.deleteElement(_id) 
         socket.emit("confirmacionBorrado",productoBorrado)
+        socket.emit("getProducts",  await managerProduct.getElements());
     })
 
-    socket.emit("getProducts",  await productManager.getProducts()); //emito info desde mi servidor
+    socket.emit("getProducts",  await managerProduct.getElements()); //emito info desde mi servidor
 })
 
 

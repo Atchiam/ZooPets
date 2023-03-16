@@ -1,8 +1,7 @@
 import { Router } from "express";
-import {ProductManager} from "../controllers/ProductManager.js"
+import managerProduct from "../controllers/Product.js";
 
 const routerSocket = Router();
-const productManager = new ProductManager('src/models/productos.json');
 
 routerSocket.get('/realtimeproducts', async(req,res) => {
     res.render("realTimeProducts", { 
@@ -11,7 +10,7 @@ routerSocket.get('/realtimeproducts', async(req,res) => {
 })
 
 routerSocket.get('/', async(req,res) => {
-    const productos = await productManager.getProducts()
+    const productos = await managerProduct.getElements()
 
     res.render("home", { 
         titulo: "PetsShop - Catalogo",

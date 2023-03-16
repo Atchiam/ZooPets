@@ -33,24 +33,21 @@ if (window.location.pathname === "/api/chat/") {
     const formEliminar = document.getElementById('formEliminarProductos')
     //------Productos
     formAgregar.addEventListener('submit', (event) => {
-    console.log("si llega");
         event.preventDefault();
-        const title = document.getElementById('title').value;
-        const description = document.getElementById('description').value;
-        const price = document.getElementById('price').value;
-        const thumbnail = document.getElementById('thumbnail').value;
-        const code = document.getElementById('code').value;
-        const stock = document.getElementById('stock').value;
-        
-        socket.emit("AddProduct", {title:title,description:description,price:price,thumbnail:thumbnail,code:code,stock:stock})
+        const info = new FormData(formAgregar)
+        const nuevoProd = {}
+        info.forEach((value,key)=>{
+            nuevoProd[key]=value
+        })     
+        socket.emit("AddProduct", nuevoProd)
         ;
         formAgregar.reset()
     });
 
     formEliminar.addEventListener('submit', (event) => {
-        console.log("si llega")
         event.preventDefault();
-        const id = document.getElementById('borrarPodId').value;  
+        const id = document.getElementById('borrarPodId').value; 
+
         socket.emit("EliminarProduct", id)
         ;
     });
@@ -69,14 +66,14 @@ if (window.location.pathname === "/api/chat/") {
                 <h3 class="text-center ">${product.title}</h3>
                 <p class="text-center card-text">${product.description}</p>
                 <p class="card-title fs-5">precio: ${product.price}</p>
-                <button class="btn btn-primary m-2" id= "botonProducto${product.id}">Elminar Pruducto</button>
+                <button class="btn btn-primary m-2" id= "botonProducto${product._id}">Elminar Pruducto</button>
             </div>
             `
         });
 
         products.forEach(product=>{
-            document.getElementById(`botonProducto${product.id}`).addEventListener("click",(e)=>{
-                socket.emit("EliminarProduct", product.id)
+            document.getElementById(`botonProducto${product._id}`).addEventListener("click",(e)=>{
+                socket.emit("EliminarProduct", product._id)
             })
         })
     })

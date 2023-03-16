@@ -1,10 +1,8 @@
 import { Router } from "express";
-import { CarritoManager } from "../controllers/CarritoManager.js";
-import { ProductManager } from "../controllers/ProductManager.js";
+
 
 const routerCarrito = Router()
-const carritoManager = new CarritoManager('src/models/carritos.json')
-const productManager = new ProductManager('src/models/productos.json')
+
 
 routerCarrito.post('/', async (req, res) => { 
     let mensaje = await carritoManager.crearCarrito()
@@ -14,7 +12,7 @@ routerCarrito.post('/', async (req, res) => {
 routerCarrito.post('/:idCarrito/product/:idProducto', async (req, res) => { 
     let idCarrito = parseInt(req.params.idCarrito)
     let idProducto = parseInt(req.params.idProducto)
-    let prodEncontrado = await  productManager.getProductByID(idProducto)
+    let prodEncontrado = await  managerProduct.getProductByID(idProducto)
     if(prodEncontrado){
         let mensaje = await carritoManager.addProductInCarrito(idCarrito,idProducto)
         res.send(mensaje)
