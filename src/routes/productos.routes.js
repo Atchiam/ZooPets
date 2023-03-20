@@ -24,17 +24,21 @@ routerProduct.get('/', async (req, res) => {
         const linkPrev = productsPag.hasPrevPage ? `/api/products?category=${category}&limit=${limit}&sort=${sort}&avaliable=${available}&page=${productsPag.prevPage}`: null
         const linkNext = productsPag.hasNextPage ? `/api/products?category=${category}&limit=${limit}&sort=${sort}&avaliable=${available}&page=${productsPag.nextPage}`: null
 
-        res.send({
-            status:"success",
-            payload: productsPag.docs,
-            totalPages: productsPag.totalPages,
-            prevPage: productsPag.prevPage,
-            nextPage: productsPag.nextPage,
-            page: productsPag.page,
-            hasPrevPage: productsPag.hasPrevPage,
-            hasNextPage: productsPag.hasNextPage,
-            prevLink: linkPrev,
-            nextLink: linkNext,
+        const send = {status:"success",
+        payload: productsPag.docs,
+        totalPages: productsPag.totalPages,
+        prevPage: productsPag.prevPage,
+        nextPage: productsPag.nextPage,
+        page: productsPag.page,
+        hasPrevPage: productsPag.hasPrevPage,
+        hasNextPage: productsPag.hasNextPage,
+        prevLink: linkPrev,
+        nextLink: linkNext,}
+
+        res.render("home", { 
+            titulo: "PetsShop - Catalogo",
+            paginate: send,
+            products: send.payload
         })
 
 

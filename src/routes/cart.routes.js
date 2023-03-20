@@ -15,9 +15,14 @@ routerCart.post('/', async (req, res) => {  //crear carrito
 
 routerCart.get('/:cid', async (req, res) => { //ANDA
     try {
-        const cartId= req.params.cid
-        const carrito = await managerCart.getElementById(cartId) 
-        res.send({response: carrito})
+        const id= req.params.cid
+        const cart = await managerCart.getElementById(id)
+        const carritopopulated= await cart.populate({path: "products.productId", model: managerCart.productModel})
+        console.log(carritopopulated.products[0].productId);
+        res.render("cart", { 
+            titulo: "PetsShop - Carrito",
+            productsCart: carritopopulated.products
+        })
     } catch (error) {
         res.send({ response: error });
     }

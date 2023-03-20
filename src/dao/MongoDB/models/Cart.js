@@ -43,6 +43,12 @@ class ManagercartMongoDB extends ManagerMongoDB {
         }
     }
 
+    async populatedCarrito(id){
+        const cart = await managerCart.getElementById(id)
+        const carritopopulated= await cart.populate({path: "products.productId", model: managerCart.productModel})
+        console.log(carritopopulated);
+    }
+
     async deleteAllProducts(cart) {
         await this._setConnection();
         cart.products = [];
