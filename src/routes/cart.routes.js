@@ -18,7 +18,7 @@ routerCart.get('/:cid', async (req, res) => { //ANDA
         const id= req.params.cid
         const cart = await managerCart.getElementById(id)
         const carritopopulated= await cart.populate({path: "products.productId", model: managerCart.productModel})
-        console.log(carritopopulated.products[0].productId);
+        console.log(carritopopulated.products[1].quantity);
         res.render("cart", { 
             titulo: "PetsShop - Carrito",
             productsCart: carritopopulated.products

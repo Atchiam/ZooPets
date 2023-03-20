@@ -1,41 +1,45 @@
-<h1>{{titulo}}</h1>
-<div class="grid m-2 gap-3 row">
-    {{#if productsCart}} 
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                <th>Imagen</th>
-                <th>Title</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Category</th>
-                <th>Precio Final</th>
-                <th>Borrar</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each productsCart}}
-                <tr>
-                <td><img src="{{this.productId.thumbnail}}" alt={{this.productId.title}}></td>
-                <td>{{this.productId.title}}</td>
-                <td>{{this.productId.price}}</td>
-                <td>{{this.productId.stock}}</td>
-                <td>{{this.productId.category}}</td>
-                <td>Precio Total</td>
-                <td><button id="{{this.productId._id}}" class="btn btn-danger">Borrar Prod</button></td>
-                </tr>
-                {{/each}}
-                <!-- Agrega más filas aquí -->
-            </tbody>
-        </table>
-    {{else}}
-        <div className="container py-5">
-            <div className="row">
-                <div className="col-md-12 text-center">
-                    <div className="alert alert-danger" role="alert">No Tenes Productos en el Carrito!</div>
-                    <Link to={"/"} className="btn">Ir al catalogo!</Link>
+<div class="mx-4">
+    <h1>{{titulo}}</h1>
+    <div class="grid m-2 gap-3 row">
+        {{#if productsCart}} 
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                    <th>Imagen</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>cantidad</th>
+                    <th>Stock</th>
+                    <th>Category</th>
+                    <th>Precio Final</th>
+                    <th>Borrar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each productsCart}}
+                    <tr>
+                    <td><img src="{{this.productId.thumbnail}}" alt={{this.productId.title}}></td>
+                    <td>{{this.productId.title}}</td>
+                    <td>{{this.productId.price}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td>{{this.productId.stock}}</td>
+                    <td>{{this.productId.category}}</td>
+                    <td>Precio Total</td>
+                    <td><button id="{{this.productId._id}}" class="btn btn-danger">Borrar Prod</button></td>
+                    </tr>
+                    {{/each}}
+                    <!-- Agrega más filas aquí -->
+                </tbody>
+            </table>
+        {{else}}
+            <div className="container py-5">
+                <div className="row">
+                    <div className="col-md-12 text-center">
+                        <div className="alert alert-danger" role="alert">No Tenes Productos en el Carrito!</div>
+                        <Link to={"/"} className="btn">Ir al catalogo!</Link>
+                    </div>
                 </div>
             </div>
-        </div>
-    {{/if}}
+        {{/if}}
+    </div>
 </div>
