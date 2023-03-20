@@ -12,21 +12,17 @@ routerProduct.get('/', async (req, res) => {
         const filtros = {stock:{ $gt: 0 }}
         if (category) filtros.category = category
         if (available) filtros.available = available
-        console.log("1");
         
         const options = {
             page: parseInt(page),
             limit: parseInt(limit),
             sort: {price: parseInt(sort)} // los valores pueden ser: asc, desc, ascending, descending, 1 y -1.
         }
-        console.log("2");
 
         const productsPag= await managerProduct.paginateElements(filtros, options)
-        console.log("3" + productsPag);
 
         const linkPrev = productsPag.hasPrevPage ? `/api/products?category=${category}&limit=${limit}&sort=${sort}&avaliable=${available}&page=${productsPag.prevPage}`: null
         const linkNext = productsPag.hasNextPage ? `/api/products?category=${category}&limit=${limit}&sort=${sort}&avaliable=${available}&page=${productsPag.nextPage}`: null
-        console.log("4");
 
         res.send({
             status:"success",
@@ -40,8 +36,7 @@ routerProduct.get('/', async (req, res) => {
             prevLink: linkPrev,
             nextLink: linkNext,
         })
-        
-        console.log("5")
+
 
     }catch(error){
         const data={

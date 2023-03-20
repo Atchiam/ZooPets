@@ -10,7 +10,7 @@ export class ManagerMongoDB {
         this.model = mongoose.model(this.collection, this.schema)
     }
 
-    async #setConnection() {
+    async _setConnection() {
         try {
             await mongoose.connect(this.#url)
             console.log("DB is connected")
@@ -20,7 +20,7 @@ export class ManagerMongoDB {
     }
 
     async addElements(elements) { //Agrego 1 o varios elementos
-        await this.#setConnection()
+        await this._setConnection()
         try {
             return await this.model.insertMany(elements)
         } catch (error) {
@@ -29,7 +29,7 @@ export class ManagerMongoDB {
     }
 
     async getElements() {
-        await this.#setConnection()
+        await this._setConnection()
         try {
             return await this.model.find().lean()
         } catch (error) {
@@ -38,7 +38,7 @@ export class ManagerMongoDB {
     }
 
     async getElementById(id) { //Agrego 1 o varios elementos
-        await this.#setConnection()
+        await this._setConnection()
         try {
             return await this.model.findById(id)
         } catch (error) {
@@ -47,7 +47,7 @@ export class ManagerMongoDB {
     }
 
     async updateElement(id, info) {
-        await this.#setConnection()
+        await this._setConnection()
         try {
             return await this.model.findByIdAndUpdate(id, info)
         } catch (error) {
@@ -56,7 +56,7 @@ export class ManagerMongoDB {
     }
 
     async deleteElement(id) {
-        await this.#setConnection()
+        await this._setConnection()
         try {
             return await this.model.findByIdAndDelete(id)
         } catch (error) {
@@ -65,7 +65,7 @@ export class ManagerMongoDB {
     }
 
     async paginateElements(filter, options){
-        await this.#setConnection()
+        await this._setConnection()
         try{
             return await this.model.paginate(filter, options)
         }catch(error){

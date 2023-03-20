@@ -44,6 +44,7 @@ class ManagerProductMongoDB extends ManagerMongoDB {
     constructor() {
         super(url, "products", productSchema)
     }
+    
 }
 
 export default ManagerProductMongoDB

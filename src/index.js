@@ -10,7 +10,7 @@ import managerProduct from './controllers/Product.js';
 
 //import routerProduct from "./routes/productos.routes.js";
 import routerMessage from './routes/chat.routes.js';
-import routerCarrito from "./routes/carritos.routes.js";
+import routerCart from './routes/cart.routes.js';
 import routerSocket from "./routes/socket.routes.js";
 import routerProduct from './routes/productos.routes.js';
 
@@ -61,7 +61,12 @@ io.on("connection", async (socket)=>{
 app.use(express.json()) 
 app.use(express.urlencoded({extended: true}))
 //handlebars
-app.engine('handlebars', engine());
+app.engine('handlebars', engine({
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true,
+    }
+}));
 app.set("view engine", 'handlebars');
 app.set('views', path.resolve(__dirname, './views'))
 
@@ -70,5 +75,7 @@ app.use('/', express.static(__dirname + '/public'))
 app.use('/', routerSocket)
 app.use('/api/chat', express.static(__dirname + '/public')) 
 app.use('/api/chat', routerMessage)
+app.use('/api/products', express.static(__dirname + '/public')) 
 app.use('/api/products', routerProduct) 
-app.use('/api/carts',routerCarrito)
+app.use('/api/cart',express.static(__dirname + '/public'))
+app.use('/api/cart',routerCart)
