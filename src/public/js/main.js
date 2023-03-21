@@ -1,5 +1,5 @@
 // codigo desde el front JS
-if (window.location.pathname === "/api/chat/") {
+if (window.location.pathname === "/chat/") {
 
     const formChat = document.getElementById("formChat")
     const mensajesChat= document.getElementById("mensajesChat")
