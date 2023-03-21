@@ -53,7 +53,6 @@ routerCart.put('/:cid', async (req, res) => { //ANDA
         await managerCart.updateElement(cartId,data)
         const cart = await managerCart.getElementById(cartId)
         res.send(cart)
-        console.log("concha su madreeee");
 
     }catch(error){
         res.send("error")
