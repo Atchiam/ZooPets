@@ -1,5 +1,6 @@
 import { Router } from "express";
 import managerCart from "../controllers/Cart.js";
+import managerProduct from "../controllers/Product.js";
 
 const routerCart = Router()
 routerCart.post('/', async (req, res) => {  //crear carrito
@@ -11,6 +12,22 @@ routerCart.post('/', async (req, res) => {  //crear carrito
         res.send({ response: error });
     }
 
+});
+routerCart.post('/:idCarrito/product/:idProducto', async (req, res) => {
+    try{
+        let idCarrito = req.params.idCarrito
+        let idProducto = req.params.idProducto
+        let prodEncontrado = await managerProduct.getElementById(idProducto)
+        if(prodEncontrado){
+            let mensaje = await managerCart.addProductToCart(idCarrito,idProducto)
+            res.send(mensaje)
+        }else{
+            res.send("el producto no se encuentra")
+        }
+
+    }catch(error){
+        res.send("error")
+    }
 });
 
 routerCart.get('/:cid', async (req, res) => { //ANDA

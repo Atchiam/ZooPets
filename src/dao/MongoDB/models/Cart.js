@@ -30,6 +30,24 @@ class ManagercartMongoDB extends ManagerMongoDB {
         this.productModel = managerProduct.model
     }
 
+    async addProductToCart(cartId, productId) {
+        try {
+            await this._setConnection();
+            const cart = await this.model.findById(cartId);
+            const indexProd = cart.products.findIndex(
+                (product) => product.productId.equals(productId)
+            );
+            if (indexProd !== -1) {
+                cart.products[indexProd].quantity += 1;
+            } else {
+                cart.products.push({productId: productId});
+            }
+            await cart.save();
+            return cart.products;
+        } catch (error) {
+            return error;
+        }
+    }
     async updateQuiantity(idCarrito, idProducto, quant){
         try{
             await this._setConnection();
