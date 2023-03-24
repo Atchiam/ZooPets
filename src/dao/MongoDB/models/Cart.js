@@ -1,4 +1,4 @@
-import { ManagerMongoDB } from "../../../db/mongoDBManager.js";
+import { ManagerMongoDB } from "../db/mongoDBManager.js";
 import { Schema} from "mongoose";
 import paginate from "mongoose-paginate-v2";
 import managerProduct from "../../../controllers/Product.js";
