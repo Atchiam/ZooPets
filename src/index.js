@@ -7,6 +7,8 @@ import * as path from 'path'
 import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
+import passport from 'passport';
+import initializePassport from './config/passport.js';
 
 //-----RUTAS
 import managerMessages from './controllers/Message.js';
@@ -19,20 +21,16 @@ import routerSocket from "./routes/socket.routes.js";
 import routerProduct from './routes/productos.routes.js';
 import routerSession from './routes/session.routes.js';
 import routerUser from './routes/user.routes.js';
+import routerGithub from './routes/github.routes.js';
 
 
 
 const app = express()
 //midlewares
 //express
+app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(express.json()) 
 app.use(express.urlencoded({extended: true}))
-app.use(cookieParser(process.env.COOKIE_SECRET))
-
-app.set("port", process.env.PORT || 8080)
-const server = app.listen(app.get("port"), () =>{
-    console.log(`Server on port ${app.get("port")}`);
-})
 
 app.use(session({
     store: MongoStore.create({
@@ -44,6 +42,17 @@ app.use(session({
     resave: true,  //Me permita cerrar la pestaña o recargar y la sesion siga activa
     saveUninitialized: true  //Guardar sesion aunque no contenga info
 }))
+
+//passwort
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
+
+app.set("port", process.env.PORT || 8080)
+const server = app.listen(app.get("port"), () =>{
+    console.log(`Server on port ${app.get("port")}`);
+})
+
 
 //------ServerIO
 const io = new Server(server);
@@ -112,3 +121,4 @@ app.use('/cart',express.static(__dirname + '/public'))
 app.use('/cart',routerCart)
 app.use('/api/sessions', routerSession)
 app.use('/user', routerUser)
+app.use('/authSession', routerGithub)

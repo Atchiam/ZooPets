@@ -1,11 +1,26 @@
 import { Router } from "express";
 import { createUser } from "../controllers/user.js";
+import passport from "passport";
+
 
 const routerUser = Router()
 
 //'/user'
+//ruta - middleware - controller
+//routerUser.post("/signup", passport.authenticate("signup") ,createUser)
 
-routerUser.post("/", createUser)
+routerUser.post("/signup", (req, res, next) => {
+    passport.authenticate('signup', (err, user) => {
+        if (err) {
+            return res.redirect('/user/signup');
+        }
+        if (!user) {
+            return res.redirect('/user/signup');
+        }
+        return res.redirect('/api/sessions/login');
+    })(req, res, next);
+});
+
 
 routerUser.get('/signup', async (req, res) => { 
     const data = req.query.menssage;
