@@ -4,14 +4,21 @@ const routerGithub = Router()
 // '/authSession'
 
 //Register
-routerGithub.get("/github", passport.authenticate('github', { scope: ['user:email'] }), async (req, res) => { })
+routerGithub.get("/github", passport.authenticate('github'))
 
 //Login
-routerGithub.get("/githubSession", passport.authenticate('github'), async (req, res) => {
-    req.session.user = req.user
-    res.redirect('/products')
-    console.log(req.user);
-    console.log(JSON.stringify(req.user));
-})
+routerGithub.get("/githubSession", (req, res, next) => {
+    passport.authenticate('github', (err, user) => {
+        if (err) {
+            return res.redirect('/api/sessions/login?menssage= Ocurrio un error en el registro');
+        }
+
+        req.session.login = true;
+        req.session.name = user.first_name;
+        req.session.role = user.role;
+        return res.redirect(`/products?menssage=hola ${req.session.name} sos ${req.session.role}`);
+
+    })(req, res, next);
+});
 
 export default routerGithub

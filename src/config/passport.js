@@ -58,7 +58,7 @@ const initializePassport = () =>{
         clientID: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
         callbackURL: "http://localhost:8080/authSession/githubSession"
-    },async(accessToken, refreshToken,profile,done)=>{
+    },async(accessToken, refreshToken, profile, done)=>{
         try{
             const user = await managerUser.getUserByEmail(profile._json.email)
     
@@ -66,14 +66,15 @@ const initializePassport = () =>{
                 done(null, user)
             }else{
                 const passwordHash = createHash('coder123')
-                const userCreated= await managerUser.addElements([{
+                const userCreated= await managerUser.newUser({
                     first_name: profile._json.name,
                     last_name: "  ",
                     email: profile._json.email,
                     age: 18,
                     password: passwordHash
-                }])
-                
+                })
+                console.log(profile._json);
+                console.log(userCreated);
                 done(null, userCreated)
     
             }
@@ -86,9 +87,6 @@ const initializePassport = () =>{
 
     //Iniciar la session del usuario
     passport.serializeUser((user, done) => {
-        if (Array.isArray(user)) {
-            done(null, user[0]._id)
-        }
         done(null, user._id)
     })
 
@@ -96,7 +94,6 @@ const initializePassport = () =>{
     passport.deserializeUser(async (id, done) => {
         const user = await managerUser.getElementById(id)
         done(null, user)
-
     })
 } 
 

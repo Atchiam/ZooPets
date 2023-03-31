@@ -22,6 +22,10 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: true
+    },
+    role: {
+        type: String,
+        default: "user"
     }
 })
 
@@ -38,6 +42,16 @@ class ManagerUserMongoDB extends ManagerMongoDB {
             return error
         }
     }
+
+    async newUser(user){
+        try {
+            return await this.model.create(user)
+        } catch (error) {
+            return error
+        }
+    }
 }
+
+
 
 export default ManagerUserMongoDB
