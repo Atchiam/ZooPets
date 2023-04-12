@@ -16,13 +16,11 @@ export const testLogin = async (req, res) => {
     const { email, password } = req.body
     try {
         const userlogin = await managerUser.getUserByEmail(email)  //Consultar users en mi BDD
-        console.log(userlogin);
         if (userlogin && comparePassword(password, userlogin.password)) {
             //Login correcto
             req.session.login = true
-            req.session.role = userlogin.role
-            req.session.name = userlogin.first_name
-            return res.redirect(`/products?menssage=hola ${req.session.name} sos ${req.session.role}`)
+            req.session.user = userlogin
+            return res.redirect(`/products?menssage=hola ${req.session.user.first_name} sos ${req.session.user.role}`)
         } else {
             res.redirect("/api/sessions/login?menssage=el email o contraseña son incorrectos", 500, {
                 mensaje: `el email o contraseña son incorrectos`
@@ -60,4 +58,12 @@ export const getSession = (req, res) => {
     res.redirect('/api/sessions/login?menssage=necesitas logiarte para ver la pagina', 500, {
         'message': "necesitas logiarte para ver la pagina"
     })
+}
+
+export const current = async (req, res) => {
+    if (req.session.login){
+        res.send(req.session.user)
+    }else{
+        res.send("no estas logiado")
+    }
 }

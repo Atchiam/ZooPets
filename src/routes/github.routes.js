@@ -16,7 +16,7 @@ routerGithub.get("/githubSession", (req, res, next) => {
         req.session.login = true;
         req.session.name = user.first_name;
         req.session.role = user.role;
-        return res.redirect(`/products?menssage=hola ${req.session.name} sos ${req.session.role}`);
+        return res.redirect(`/products?menssage=hola ${req.session.name } sos ${req.session.role}`);
 
     })(req, res, next);
 });

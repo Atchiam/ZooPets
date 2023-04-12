@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { getSession, testLogin, destroySession } from "../controllers/session.js";
+import { getSession, testLogin, destroySession, current } from "../controllers/session.js";
 import passport from "passport";
+
 
 const routerSession = Router()
 
@@ -12,5 +13,7 @@ routerSession.get('/login', async (req, res) => {
 })
 routerSession.post("/login", passport.authenticate('login'), testLogin)
 routerSession.get("/logout", destroySession)
+
+routerSession.get("/current", current )
 
 export default routerSession

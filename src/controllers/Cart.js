@@ -1,8 +1,5 @@
-import { getManagerCart } from "../dao/daoManager.js";
 import managerProduct from "../controllers/Product.js";
-
-const data = await getManagerCart();
-const managerCart = new data();
+import { managerCart } from "../config/passport.js";
 
 export const createNewCart =
 async (req, res) => {  //crear carrito
@@ -33,18 +30,23 @@ async (req, res) => {
 }
 export const getCartId =
 async (req, res) => { //ANDA
-    try {
-        const id= req.params.cid
-        const cart = await managerCart.getElementById(id)
-        const carritopopulated= await cart.populate({path: "products.productId", model: managerCart.productModel})
-        console.log(carritopopulated.products[1].quantity);
-        res.render("cart", { 
-            titulo: "PetsShop - Carrito",
-            productsCart: carritopopulated.products
-        })
-    } catch (error) {
-        res.send({ response: error });
+    if (req.session.login){
+        try {
+            const id= req.session.user.cartId
+            const cart = await managerCart.getElementById(id)
+            const carritopopulated= await cart.populate({path: "products.productId", model: managerCart.productModel})
+            console.log(carritopopulated.products[1].quantity);
+            res.render("cart", { 
+                titulo: "PetsShop - Carrito",
+                productsCart: carritopopulated.products
+            })
+        } catch (error) {
+            res.send({ response: "error" });
+        }
+    }else{
+        res.redirect("/api/sessions/login")
     }
+
 }
 export const putAllArrayCart =
 async (req, res) => { //ANDA

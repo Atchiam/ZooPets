@@ -3,11 +3,18 @@ import passport from "passport"
 import managerUser from "../controllers/user.js"
 import { createHash, comparePassword } from "../utils/bcrypt.js"
 import GitHubStrategy from 'passport-github2'
+import { getManagerCart } from "../dao/daoManager.js"
 
-//passport se manejara como un middleware
-const LocalStrategy= local.Strategy
+
+const data = await getManagerCart();
+export const managerCart = new data();
+
+//Passport se va a manejar como si fuera un middleware 
+const LocalStrategy = local.Strategy //Estretagia local de autenticacion
+
 
 const initializePassport = () =>{
+
     passport.use("signup", new LocalStrategy(
         {passReqToCallback: true, usernameField: "email"}, async (req,username, password,done)=>{
             //validar y crear user
@@ -20,14 +27,18 @@ const initializePassport = () =>{
                     //User existente
                 return done(null, false) //null = errores false no se creo el user
                 } else {
+                    const newCart = await managerCart.addElements()
+                    console.log(newCart);
                     const hashPassword = createHash(password)
-                    const userCreated= await managerUser.addElements([{
+                    const userCreated= await managerUser.newUser({
                         first_name: first_name,
                         last_name: last_name,
                         email: email,
                         age: age,
-                        password: hashPassword
-                    }])
+                        password: hashPassword,
+                        cartId:newCart[0]._id
+                    })
+                    console.log(userCreated);
                     return done(null, userCreated)
                 }
                 
@@ -65,13 +76,15 @@ const initializePassport = () =>{
             if(user){ //user ya existe en BD
                 done(null, user)
             }else{
+                const newCart = managerCart.addElements()
                 const passwordHash = createHash('coder123')
                 const userCreated= await managerUser.newUser({
                     first_name: profile._json.name,
                     last_name: "  ",
                     email: profile._json.email,
                     age: 18,
-                    password: passwordHash
+                    password: passwordHash,
+                    cartId:newCart[0]._id
                 })
                 console.log(profile._json);
                 console.log(userCreated);

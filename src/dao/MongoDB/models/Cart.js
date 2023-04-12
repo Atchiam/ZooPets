@@ -26,7 +26,7 @@ const cartSchema = new Schema ({
 cartSchema.plugin(paginate)
 class ManagercartMongoDB extends ManagerMongoDB {
     constructor() {
-        super(url, "cart", cartSchema)
+        super(url, "carts", cartSchema)
         this.productModel = managerProduct.model
     }
 
